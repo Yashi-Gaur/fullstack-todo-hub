@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../assets/lgs.png';
+import logo from '../assets/yashi_logo.png';
 import { Box, Typography, Fab, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
