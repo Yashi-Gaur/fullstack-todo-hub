@@ -1,17 +1,18 @@
-from fastapi import FastAPI, Security, HTTPException, Depends, status
+from fastapi import FastAPI, Security, HTTPException, Depends
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 from database import engine
 import models
-from routers import auth
+from routers import auth, todos
  
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router)
+app.include_router(todos.router)
 
 # Allow CORS for frontend
 app.add_middleware(

@@ -58,6 +58,19 @@ def create_access_token(username: str,
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
+async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+    try:
+        user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = user.get('sub')
+        id: int = user.get('id')
+        if username is None or id is None:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                    detail='Could not validate user.')
+        return {'username': username, 'id': id}
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='Could not validate user.')   
+
 @router.get('/all', status_code=status.HTTP_200_OK)
 async def get_user(db: db_dependency):
     return db.query(Users).all()
