@@ -10,8 +10,9 @@ class Users(Base):
     email = Column(String, unique=True)
     name = Column(String)
     mobile = Column(String)
-    password = Column(String)
+    hashed_password = Column(String)
     employee_id = Column(String)
+    address = Column(String)
     token = Column(String)
 
 
