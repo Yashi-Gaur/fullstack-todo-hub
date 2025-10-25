@@ -38,11 +38,16 @@ function Dashboard({ token, onLogout }) {
   
   const fetchTasks = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/tasks', {
-        headers: { Authorization: token },
+      const res = await axios.get('http://localhost:8000/todos/', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
       });
       setTasks(sortTasks(res.data));
-    } catch {
+    } catch(err){
+      console.log('Error status:', err.response?.status);
+      console.log('Error data:', err.response?.data);
       alert('Failed to fetch tasks');
     }
   };

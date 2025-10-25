@@ -27,11 +27,14 @@ function Login({onLogin}) {
   const submit = async (username, password) => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8000/token', {
-        username,
-        password,
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+      const res = await axios.post('http://localhost:8000/user/token', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
-      onLogin(res.data.token);
+      onLogin(res.data.access_token);
+
       navigate('/dashboard');
     } catch (err) {
       alert('Invalid username or password');

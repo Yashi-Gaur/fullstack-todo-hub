@@ -65,11 +65,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         id: int = user.get('id')
         if username is None or id is None:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                    detail='Could not validate user.')
+                                    detail='Could not validate user1.')
         return {'username': username, 'id': id}
-    except JWTError:
+    except JWTError as e:
+        print("JWT decode error:", e)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='Could not validate user.')   
+                            detail='Could not validate user2.')   
 
 @router.get('/all', status_code=status.HTTP_200_OK)
 async def get_user(db: db_dependency):
@@ -99,6 +100,6 @@ async def login_for_token_access(form_data: Annotated[OAuth2PasswordRequestForm,
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user.')
     token = create_access_token(user.username, user.id, timedelta(minutes=20))
-
+    
     return {'access_token': token, 'token_type': 'bearer'}
     
