@@ -23,9 +23,9 @@ function Profile({ token }) {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/profile', {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get('http://localhost:8000/profile/', 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setUser(res.data);
     } catch {
       alert('Failed to fetch profile');
@@ -35,22 +35,34 @@ function Profile({ token }) {
   useEffect(() => {
     fetchProfile();
   }, [token]);
-
+  
   const handleChange = (field) => (e) => {
     setUser((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const saveChanges = async () => {
-    try {
-      await axios.put('http://localhost:8000/api/profile', user, {
-        headers: { Authorization: token },
-      });
-      await fetchProfile();
-      setEditing(false);
-    } catch {
-      alert('Failed to update profile');
-    }
-  };
+const saveChanges = async () => {
+  try {
+    await axios.put(
+      'http://localhost:8000/profile/update',   
+      {
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        mobile: user.mobile,
+        address: user.address,
+        employee_id: user.employee_id,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }   
+    );
+
+    await fetchProfile();
+    setEditing(false);
+  } catch (err) {
+    console.error(err);
+    alert('Failed to update profile');
+  }
+};
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
