@@ -70,9 +70,9 @@ function Dashboard({ token, onLogout }) {
         const newOrder = maxIncomplete + 1;
 
         await axios.post(
-          "http://localhost:8000/api/tasks/add",
-          { title: newTitle, complete: "False", order: newOrder },
-          { headers: { Authorization: token } }
+          "http://localhost:8000/todos/create",
+          { title: newTitle, order: newOrder, complete: false },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         setMaxIncompleteOrder(newOrder);
