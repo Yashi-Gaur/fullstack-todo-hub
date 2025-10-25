@@ -82,9 +82,9 @@ function Dashboard({ token, onLogout }) {
         console.log(newOrder);
 
         await axios.post(
-          "http://localhost:8000/api/tasks/add",
-          { title: newTitle, complete: "False", order: newOrder },
-          { headers: { Authorization: token } }
+          "http://localhost:8000/todos/create",
+          { title: newTitle, order: newOrder, complete: false },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         setMaxIncompleteOrder(newOrder);
@@ -97,10 +97,9 @@ function Dashboard({ token, onLogout }) {
       
   const deleteTask = async (id) => {
     try {
-      await axios.post(
-        'http://localhost:8000/api/tasks/delete',
-        { id },
-        { headers: { Authorization: token } }
+      await axios.delete(
+        `http://localhost:8000/todos/delete/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTasks();
     } catch {
@@ -111,9 +110,9 @@ function Dashboard({ token, onLogout }) {
   const updateTask = async (id, newTitle) => {
     try {
       await axios.put(
-        'http://localhost:8000/api/tasks/update',
-        { id, title: newTitle },
-        { headers: { Authorization: token } }
+        `http://localhost:8000/todos/update/${id}`,
+        { id: id, title: newTitle },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTasks();
     } catch {
