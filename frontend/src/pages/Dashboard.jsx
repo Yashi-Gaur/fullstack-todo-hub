@@ -21,8 +21,8 @@ function Dashboard({ token, onLogout }) {
   const [maxIncompleteOrder, setMaxIncompleteOrder] = useState(-1);
   const [maxCompleteOrder, setMaxCompleteOrder] = useState(-1);
   const total = tasks.length;
-  const completed = tasks.filter((t) => t.completed).length;
-  const incomplete = total - completed;
+  const complete = tasks.filter((t) => t.complete).length;
+  const incomplete = total - complete;
 
   useEffect(() => {
     setLoading(true);
@@ -32,7 +32,7 @@ function Dashboard({ token, onLogout }) {
   
   const sortTasks = (list) => 
     list.slice().sort((a, b) => {
-      if (a.completed !== b.completed) return a.completed ? 1 : -1;
+      if (a.complete !== b.complete) return a.complete ? 1 : -1;
       return a.order - b.order;
   });
   
@@ -58,20 +58,20 @@ function Dashboard({ token, onLogout }) {
     try {
       if (maxIncompleteOrder === -1) {
         const maxIncomplete = tasks
-          .filter((t) => !t.completed)
+          .filter((t) => !t.complete)
           .reduce((max, t) => Math.max(max, t.order ?? 0), 0);
 
-        const maxCompleted = tasks
-          .filter((t) => t.completed)
+        const maxComplete = tasks
+          .filter((t) => t.complete)
           .reduce((max, t) => Math.max(max, t.order ?? 0), 0);
 
-        setMaxCompleteOrder(maxCompleted);
+        setMaxCompleteOrder(maxComplete);
 
         const newOrder = maxIncomplete + 1;
 
         await axios.post(
           "http://localhost:8000/api/tasks/add",
-          { title: newTitle, completed: "False", order: newOrder },
+          { title: newTitle, complete: "False", order: newOrder },
           { headers: { Authorization: token } }
         );
 
@@ -83,7 +83,7 @@ function Dashboard({ token, onLogout }) {
 
         await axios.post(
           "http://localhost:8000/api/tasks/add",
-          { title: newTitle, completed: "False", order: newOrder },
+          { title: newTitle, complete: "False", order: newOrder },
           { headers: { Authorization: token } }
         );
 
@@ -121,42 +121,42 @@ function Dashboard({ token, onLogout }) {
     }
   };
 
-  const completeTask = async (taskId, currentCompleted) => {
+  const completeTask = async (taskId, currentComplete) => {
     try {
-      const updatedCompleted = !currentCompleted;
+      const updatedComplete = !currentComplete;
       let maxIncomplete = maxIncompleteOrder;
       let maxComplete = maxCompleteOrder;
       if (maxIncompleteOrder === -1) {
         maxIncomplete = tasks
-          .filter((t) => !t.completed)
+          .filter((t) => !t.complete)
           .reduce((max, t) => Math.max(max, t.order ?? 0), 0);
 
         maxComplete = tasks
-          .filter((t) => t.completed)
+          .filter((t) => t.complete)
           .reduce((max, t) => Math.max(max, t.order ?? 0), 0);
 
-        if(updatedCompleted) {
+        if(updatedComplete) {
           setMaxIncompleteOrder(maxIncomplete);
         } else {
-          setMaxCompleteOrder(maxComplete);
+          setMaxCompleteOrder(maxComplete); 
         }
       }
-      const newOrder = updatedCompleted? maxComplete+1 : maxIncomplete+1;
+      const newOrder = updatedComplete? maxComplete+1 : maxIncomplete+1;
       await axios.put(
-        'http://localhost:8000/api/tasks/complete',
-        { id: taskId, completed: updatedCompleted, order: newOrder },
-        { headers: { Authorization: token } }
+        `http://localhost:8000/todos/complete/${taskId}`,  // <-- path parameter
+        { id:taskId, order: newOrder, complete: updatedComplete },   // <-- body payload
+        { headers: { Authorization: `Bearer ${token}` } }   // <-- include Bearer token
       );
 
       setTasks((prev) =>
         sortTasks(
           prev.map((task) =>
-            task.id === taskId ? { ...task, completed: updatedCompleted, order: newOrder } : task
+            task.id === taskId ? { ...task, complete: updatedComplete, order: newOrder } : task
           )
         )
       );
 
-      if(updatedCompleted) {
+      if(updatedComplete) {
         setMaxCompleteOrder(newOrder);
       } else {
         setMaxIncompleteOrder(newOrder);
@@ -219,11 +219,12 @@ function Dashboard({ token, onLogout }) {
                   key={task.id}
                   {...motionProps}
                 >
+                {console.log(task.complete)}
                   <Task 
                     key={task.id} 
                     id={task.id} 
                     title={task.title} 
-                    completed={task.completed} 
+                    complete={task.complete} 
                     clickCheckBox={completeTask}
                     clickSave={updateTask}
                     clickDelete={deleteTask}
@@ -237,7 +238,7 @@ function Dashboard({ token, onLogout }) {
         {/* Right section */}
         {!isSmallScreen && showRight && (
           <div className='statsContainer'>
-            <StatList total={total} incomplete={incomplete} completed={completed}/>
+            <StatList total={total} incomplete={incomplete} complete={complete}/>
 
             {/* Arrow on left of stats panel */}
             <div
@@ -345,7 +346,7 @@ function Dashboard({ token, onLogout }) {
               gap: 2,
             }}
           >
-            <StatList total={total} incomplete={incomplete} completed={completed}/>
+            <StatList total={total} incomplete={incomplete} complete={complete}/>
           </Box>
         </Drawer>
       </div>

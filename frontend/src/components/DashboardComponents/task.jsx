@@ -27,7 +27,7 @@ function Task(props) {
         <div>
             <div className='list-div'>
             {/* Checkbox and Title */}
-            <FormControlLabel control={<Checkbox onClick={() => props.clickCheckBox(props.id, props.completed)} checked={props.completed}  />} label={editTaskId === props.id ? (
+            <FormControlLabel control={<Checkbox onClick={() => props.clickCheckBox(props.id, props.complete)} checked={props.complete}  />} label={editTaskId === props.id ? (
                 <input
                     value={editTaskTitle}
                     onChange={(e) => setEditTaskTitle(e.target.value)}
