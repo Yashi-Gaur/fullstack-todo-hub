@@ -11,7 +11,7 @@ import AnimatedSection from '../components/LoginComponents/animatedSection.jsx';
 import LoginForm from '../components/LoginComponents/loginForm.jsx';
 
 
-function Login({ onLogin }) {
+function Login({onLogin}) {
   const navigate = useNavigate();
   const { setLoading } = useContext(LoadingContext);
 
@@ -27,7 +27,7 @@ function Login({ onLogin }) {
   const submit = async (username, password) => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8000/api/login', {
+      const res = await axios.post('http://localhost:8000/token', {
         username,
         password,
       });

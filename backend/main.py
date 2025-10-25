@@ -79,7 +79,7 @@ USERS = [
  
 # User-specific tasks stored as {username: [tasks]}
 TASKS = {
-    "admin": [
+    "yashi": [
         {"id": 1, "title": "Review reports", "completed": False, "order": 1},
         {"id": 2, "title": "Update system settings", "completed": False, "order": 2},
     ],
