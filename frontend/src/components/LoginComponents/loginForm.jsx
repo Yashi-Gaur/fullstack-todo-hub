@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Box, TextField, Button, Typography, Modal } from '@mui/material';
 import TypewriterDisplay from './typewriterDisplay';
+import SignUpModal from './signUpModal';
+import axios from 'axios';
 
 function LoginForm(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [openSignUp, setOpenSignUp] = React.useState(false);
+    const handleOpen = () => setOpenSignUp(true);
+    const handleClose = () => setOpenSignUp(false);
+    
+    
+    const createUser = async (form) => {
+        try {
+            await axios.post(
+                "http://localhost:8000/user/new-user",
+                {   
+                    username: form.username,
+                    email: form.email,
+                    name: form.name,
+                    mobile: form.mobile,
+                    address: form.address,
+                    password: form.password,
+                    employee_id: form.employee_id
+                }
+            );
+            setOpenSignUp(false)
+        } catch (err) {
+        alert('Could not add User');
+        } 
+    };
 
     const texts = ['Stay Organized', 'Be Productive', 'Plan Your Tasks'];
 
@@ -70,8 +96,43 @@ function LoginForm(props) {
                 <Button type="submit" variant="contained" onClick={() => props.clickSubmit(username, password)} fullWidth>
                     Login
                 </Button>
+                <Typography
+                    onClick={handleOpen}  
+                    sx={{
+                        mt: 2,
+                        textAlign: "center",
+                        color: "#0077cc",
+                        cursor: "pointer",
+                        fontSize: "0.9rem",
+                        "&:hover": { textDecoration: "underline" },
+                    }}
+                >
+                    Don't have an account? Sign up!
+                </Typography>
                 </form>
             </Box>
+            <Modal
+                open={openSignUp}
+                onClose={handleClose}
+                sx={{
+
+                }}
+            >
+                <Box
+                    sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    outline: "none",
+                    }}
+                >
+                    <SignUpModal
+                        onClose={handleClose}
+                        createUser={createUser}
+                    />
+                </Box>
+            </Modal>     
         </Box>
     )
 }
